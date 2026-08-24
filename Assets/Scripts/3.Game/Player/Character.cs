@@ -53,7 +53,8 @@ public class Character : Singleton<Character> //어디서나 접근 가능한 Ch
     [Header("Summon")] //인스펙터 창에서 변수 목록 위에 "Summon"이라는 구분을 위한 헤더 타이틀을 표시
     [SerializeField] GameObject tamedPet;
 
-    bool isRun, isAttacked = false; //bool값을 받는 isRun, 초기값 false를 가진 isAttacked를 선언
+    bool isRun, isAttacked = false;
+    bool externalMovementVisualControl;
     bool isAvoid = false;
     [HideInInspector] public bool isDead = false; //인스펙터 창에서 숨기고, bool값을 받는 초기값 false의 isDead를 선언
 
@@ -86,6 +87,14 @@ public class Character : Singleton<Character> //어디서나 접근 가능한 Ch
     SoundManager soundManager;
 
     public bool IsFlip => rendUpper.flipX;
+    public float MovementAnimationSpeed => 1f + (speed * 0.1f);
+
+    public RuntimeAnimatorController GetAnimationController(int index)
+    {
+        if (currentController == null || index < 0 || index >= currentController.Length)
+            return null;
+        return currentController[index];
+    }
 
     Vector3 initParticleScale;
 
@@ -164,20 +173,35 @@ public class Character : Singleton<Character> //어디서나 접근 가능한 Ch
         {
             if (!isCanControll) //
             {
-                Flip(); //좌우반전
-                isRun = false;
-                anim.SetBool("isRun", isRun); //
+                Flip();
+                if (!externalMovementVisualControl)
+                {
+                    isRun = false;
+                    anim.SetBool("isRun", isRun);
+                }
                 return;
             }
 
             isRun = false;
 
-            if (currentHp > 0 && agent.enabled)
+            if (currentHp > 0 && agent.enabled && agent.isOnNavMesh)
                 Move();
 
-            anim.SetFloat("moveSpeed", 1 + (speed * 0.1f));
+            anim.SetFloat("moveSpeed", MovementAnimationSpeed);
             anim.SetBool("isRun", isRun);
         }
+    }
+
+    public void SetFacingLeft(bool faceLeft)
+    {
+        if (rendUpper != null) rendUpper.flipX = faceLeft;
+        if (rendLower != null) rendLower.flipX = faceLeft;
+    }
+
+    public void SetExternalMovementVisualControl(bool enabled)
+    {
+        externalMovementVisualControl = enabled;
+        if (!enabled && anim != null) anim.SetBool("isRun", false);
     }
 
     public void UpdateStat()
@@ -352,6 +376,12 @@ public class Character : Singleton<Character> //어디서나 접근 가능한 Ch
 
     void Move() 
     {
+        if (agent == null || !agent.enabled || !agent.isOnNavMesh)
+        {
+            isRun = false;
+            return;
+        }
+
         bool xInput = (Input.GetKey((KeyCode)PlayerPrefs.GetInt("Key_Left"))) 
             || (Input.GetKey((KeyCode)PlayerPrefs.GetInt("Key_Right")));
         bool zInput = (Input.GetKey((KeyCode)PlayerPrefs.GetInt("Key_Up"))) || (Input.GetKey((KeyCode)PlayerPrefs.GetInt("Key_Down")));
