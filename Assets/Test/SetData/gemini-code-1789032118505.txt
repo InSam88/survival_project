@@ -1,5 +1,0 @@
-int,string,int,string,int
-itemId,itemName,itemType,description,maxCount
-1000000,나무 울타리,0,"집을 보호하는 기초 방어 시설이다.",10
-1000001,대나무 울타리,0,"단단한 대나무로 만든 울타리이다.",20
-1000002,회복 포션,1,"사용 시 체력 50, 마나 20을 즉시 회복한다.",5

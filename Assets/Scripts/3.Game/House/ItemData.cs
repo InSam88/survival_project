@@ -115,9 +115,9 @@ public class ItemData : Singleton<ItemData>
 
         ItemInfo[] items = new ItemInfo[count];
 
-        string json = LoadFile("ItemtData"); //텍스트 파일 읽어오기
-        object convert = JsonUtility.FromJson(json, typeof(ItemJson)); //Json 텍스트를 텍스트를 C# 객체로 변환(파싱)
-        ItemJson itemJson = convert as ItemJson; //C# ItemJson 타입으로 캐스팅
+        string json = LoadFile("ItemtData");
+        object convert = JsonUtility.FromJson(json, typeof(ItemJson));
+        ItemJson itemJson = convert as ItemJson;
         ItemInfo[] beforeItems = itemJson.items;
 
         for (int i = 0; i < beforeItems.Length; i++)
