@@ -14,13 +14,13 @@ public class ItemInventory : MonoBehaviour
     public GameObject DragSlot => dragSlot;
 
     int currentCategory;
-    List<ItemInvenSlot> slots;
+    List<ItemInvenSlot> slots; //배열 slots 선언
 
     GameManager gameManager;
 
     private void Awake()
     {
-        slots = new List<ItemInvenSlot>();
+        slots = new List<ItemInvenSlot>(); //slots 배열 초기화
         gameManager = GameManager.Instance;
 
         currentCategory = -1;
